@@ -23,6 +23,13 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect("/urls")
 })
 
+app.post('/urls/:id', (req, res) => {
+  const newLongURL = req.body['longURL'];
+  const shortURL = req.params.id
+  urlDatabase[shortURL] = newLongURL;
+  res.redirect(`/urls/:${shortURL}`);
+});
+
 app.get("/urls/new", (req, res) => { // new URL Form
   res.render('urls_new');
 })
