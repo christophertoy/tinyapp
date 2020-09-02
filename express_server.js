@@ -19,6 +19,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 })
 
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies["username"] };
+  res.render("registration.ejs", templateVars);
+})
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL
   delete urlDatabase[shortURL];
