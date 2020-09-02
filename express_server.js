@@ -33,6 +33,7 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+// render registration page
 app.get("/register", (req, res) => {
   const id = req.cookies.user_id
   let templateVars = { username: req.cookies["username"], user: users[id] };
@@ -59,7 +60,9 @@ app.post("/register", (req, res) => {
   res.redirect("/urls")
 });
 
+// render login page
 app.get("/login", (req, res) => {
+  const id = req.cookies.user_id
   let templateVars = { username: req.cookies["username"], user: users[id] };
   res.render("login", templateVars);
 })
