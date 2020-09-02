@@ -27,7 +27,7 @@ app.post('/urls/:id', (req, res) => {
   const newLongURL = req.body['longURL'];
   const shortURL = req.params.id
   urlDatabase[shortURL] = newLongURL;
-  res.redirect(`/urls/:${shortURL}`);
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/urls/new", (req, res) => { // new URL Form
@@ -60,7 +60,7 @@ app.post("/urls", (req, res) => {
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
   urlDatabase[shortURL] = longURL;
-  res.redirect(`/urls/:${shortURL}`); // Redirect to /urls/:shortURL
+  res.redirect(`/urls/${shortURL}`); // Redirect to /urls/:shortURL
 });
 
 function generateRandomString() {
