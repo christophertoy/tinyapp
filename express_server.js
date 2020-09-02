@@ -29,14 +29,14 @@ const users = {
 
 app.get("/urls", (req, res) => {
   const id = req.cookies.user_id
-  let templateVars = { urls: urlDatabase, username: req.cookies["username"], user: users[id] }
+  let templateVars = { urls: urlDatabase, user: users[id] }
   res.render("urls_index", templateVars);
 });
 
 // render registration page
 app.get("/register", (req, res) => {
   const id = req.cookies.user_id
-  let templateVars = { username: req.cookies["username"], user: users[id] };
+  let templateVars = { user: users[id] };
   res.render("registration", templateVars);
 });
 
@@ -63,15 +63,40 @@ app.post("/register", (req, res) => {
 // render login page
 app.get("/login", (req, res) => {
   const id = req.cookies.user_id
-  let templateVars = { username: req.cookies["username"], user: users[id] };
+  let templateVars = { user: users[id] };
   res.render("login", templateVars);
 })
+
+app.post('/login', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  let foundUser = null;
+  for (const userID in users) {
+    if (email === users[userID].email) {
+      foundUser = userID;
+    } 
+  } 
+
+  if (users[foundUser].password !== password) {
+    return res.send("403 Forbidden");
+  };
+ 
+  res.cookie("user_id", foundUser);
+  res.redirect("/urls");
+});
+
+app.post('/logout', (req, res) => {
+  res.clearCookie("user_id");
+  res.redirect("/urls");
+});
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL
   delete urlDatabase[shortURL];
   res.redirect("/urls")
 });
+
 
 app.post('/urls/:id', (req, res) => {
   const newLongURL = req.body['longURL'];
@@ -80,28 +105,17 @@ app.post('/urls/:id', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
-app.post('/login', (req, res) => {
-  res.cookie("username", req.body.username)
-  res.redirect("/urls");
-});
-
-app.post('/logout', (req, res) => {
-  res.clearCookie("username", req.body.username)
-  res.redirect("/urls");
-});
 
 
 app.get("/urls/new", (req, res) => { // new URL Form
   const id = req.cookies.user_id
-  let templateVars = {
-    username: req.cookies["username"], user: users[id]
-  };
+  let templateVars = { user: users[id] };
   res.render('urls_new', templateVars);
 })
 
 app.get("/urls/:shortURL", (req, res) => {
   const id = req.cookies.user_id
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"], user: users[id]  };
+  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], user: users[id] };
   res.render("urls_show", templateVars);
 });
 
