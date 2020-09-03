@@ -22,10 +22,10 @@
   </div>
   <main style="margin:1em">
   <h3>Edit</h3>
-  <form action="/urls" method="POST">
+  <form action="/urls/<%= shortURL %>"  method="POST">
     <div class="form-group row">
       <div class="col-4"
-      <label>New URL:</label>
+      <label>Update URL:</label>
       <input type="text" class="form-control" name="longURL" placehoder="http://">
       </div>
     </div>
