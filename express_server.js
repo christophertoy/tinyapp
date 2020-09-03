@@ -36,6 +36,16 @@ const findUserByEmail = (email) => {
   return null;
 };
 
+// checks current id against users in database
+const userCheck = (id) => {
+  for (const user in users) {
+    if (user === id) {
+      return true;
+    }
+  } 
+  return false;
+}
+
 const urlsForUser = (id) => {
 const filteredURL = {};
   for (const dataBaseID in urlDatabase) {
@@ -48,12 +58,13 @@ const filteredURL = {};
 
 app.get("/urls", (req, res) => {
   const id = req.cookies.user_id
-  if (!id) {
-    return res.redirect('/login')
-  };
   const filteredURL = urlsForUser(id);
+  console.log(urlDatabase);
+  console.log(filteredURL);
   let templateVars = { urls: filteredURL, user: users[id] }
   res.render("urls_index", templateVars);
+
+  // return res.redirect('/login')
 });
 
 // render registration page
@@ -122,26 +133,26 @@ app.post('/logout', (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL
   const id = req.cookies.user_id
-  // if (id !== urlDatabase[shortURL].id) {
-  //   return res.send("Please log in or register")
-  // }
-  delete urlDatabase[shortURL];
-  res.redirect("/urls")
+  if (userCheck(shortURL)) {
+    delete urlDatabase[shortURL];
+    return res.redirect("/urls")
+  } else {
+    return res.redirect("/login");
+  }
 });
 
 // Edit URL 
 app.post('/urls/:id', (req, res) => {
   const id = req.cookies.user_id
-  // if (id !== urlDatabase[shortURL].id) {
-  //   return res.send("Please log in or register")
-  // };
-  const newLongURL = req.body['longURL'];
-  console.log(newLongURL);
-  const shortURL = req.params.id
-  console.log(shortURL);
-  urlDatabase[shortURL].longURL = newLongURL;
-  console.log(urlDatabase);
-  res.redirect(`/urls/${shortURL}`);
+  if(userCheck(id)) {
+    const newLongURL = req.body['longURL'];
+    const shortURL = req.params.id
+    urlDatabase[shortURL].longURL = newLongURL;
+    res.redirect(`/urls/${shortURL}`);
+  } else {
+    res.redirect("/login")
+  }
+
 });
 
 
@@ -163,10 +174,12 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
+  const id = req.cookies.user_id
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;
-  urlDatabase[shortURL] = { longURL: longURL, userID: shortURL }
-  res.redirect(`/urls/${shortURL}`); // Redirect to /urls/:shortURL
+  urlDatabase[shortURL] = { longURL: longURL, userID: id }
+  res.redirect(`/urls/${shortURL}`);
+  
 });
 
 app.get("/urls/:shortURL", (req, res) => {
