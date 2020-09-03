@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 // const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const findUserByEmail = require('./helpers');
 const app = express();
 const PORT = 8080;
 
@@ -33,16 +34,6 @@ const users = {
     password: "dishwasher-funk"
   }
 }
-
-const findUserByEmail = (email) => {
-  for (const userId in users) {
-    const user = users[userId];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-};
 
 // checks current id against users in database
 const userCheck = (id) => {
@@ -88,7 +79,7 @@ app.post("/register", (req, res) => {
       return res.status(400).send("400 Bad Request");
     }
     
-  const foundUser = findUserByEmail(email);
+  const foundUser = findUserByEmail(email, users);
 
     if (foundUser) {
       return res.status(400).send("400 Bad Request");
@@ -118,7 +109,7 @@ app.post('/login', (req, res) => {
     return res.send('email and password cannot be blank');
   }
   
-  const foundUser = findUserByEmail(email);
+  const foundUser = findUserByEmail(email, users);
 
   if (foundUser === null) {
     return res.send('no user with that email found');
