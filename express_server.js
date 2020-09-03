@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080;
 
@@ -88,8 +89,9 @@ app.post("/register", (req, res) => {
     }
 
   const id = generateRandomString();
-  newUser = { id, email, password };
+  newUser = { id, email, password: bcrypt.hashSync(password, 1) };
   users[id] = newUser;
+  console.log(users);
   res.cookie("user_id", newUser.id);
   res.redirect("/urls")
 });
@@ -115,7 +117,7 @@ app.post('/login', (req, res) => {
     return res.send('no user with that email found');
   };
 
-  if (foundUser.password !== password) {
+  if (bcrypt.compareSync(password, foundUser.password) === false) {
     return res.status(403).send("403 Forbidden");
   };
  
