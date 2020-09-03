@@ -26,6 +26,7 @@ const users = {
     password: "dishwasher-funk"
   }
 }
+
 const findUserByEmail = (email) => {
   for (const userId in users) {
     const user = users[userId];
@@ -40,11 +41,11 @@ const findUserByEmail = (email) => {
 const userCheck = (id) => {
   for (const user in users) {
     if (user === id) {
-      return true;
+      return user;
     }
   } 
-  return false;
-}
+  return null;
+};
 
 const urlsForUser = (id) => {
 const filteredURL = {};
@@ -142,12 +143,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 // Edit URL 
 app.post('/urls/:id', (req, res) => {
   const id = req.cookies.user_id
-  
-    const newLongURL = req.body['longURL'];
-    const shortURL = req.params.id
-    urlDatabase[shortURL].longURL = newLongURL;
-    res.redirect(`/urls/${shortURL}`);
-  
+  const newLongURL = req.body['longURL'];
+  const shortURL = req.params.id
+  urlDatabase[shortURL].longURL = newLongURL;
+  res.redirect(`/urls/${shortURL}`);
 
 });
 
@@ -156,31 +155,34 @@ app.post('/urls/:id', (req, res) => {
 app.get("/urls/new", (req, res) => { 
   const id = req.cookies.user_id
   let templateVars = { user: users[id] };
-
-  if(userCheck(id)){
-  for (const user in users) {
-    if (user === users[id].id) {
-      return res.render('urls_new', templateVars); 
-    } 
+  
+  if (id === undefined) {
+    return res.redirect('/login')
+  }  
+  
+  if (userCheck(id)) { 
+    return res.render('urls_new', templateVars); 
+  } else {
+    res.redirect("/login");
   }
-  }
-  res.redirect('/login');
-});
+})
 
 app.post("/urls", (req, res) => {
   const id = req.cookies.user_id
-  const shortURL = generateRandomString();
-  const longURL = req.body.longURL;
-  urlDatabase[shortURL] = { longURL: longURL, userID: id }
-  res.redirect(`/urls/${shortURL}`);
-  
+    const shortURL = generateRandomString();
+    const longURL = req.body.longURL;
+    urlDatabase[shortURL] = { longURL: longURL, userID: id }
+    res.redirect(`/urls/${shortURL}`);
+ 
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   const id = req.cookies.user_id
-  shortURL = req.params.shortURL;
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[shortURL].longURL, user: users[id] };
-  res.render("urls_show", templateVars);
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL].longURL;
+  let templateVars = { shortURL: req.params.shortURL, longURL, user: users[id] };
+  res.render("urls_show", templateVars); 
+  
 });
 
 app.get("/", (req, res) => {
@@ -202,8 +204,9 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 
+
 function generateRandomString() {
- 
+  
   let randomString = '';
   let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
