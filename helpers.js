@@ -2,10 +2,10 @@ const findUserByEmail = (email, database) => {
   for (const userId in database) {
     const user = database[userId];
     if (user.email === email) {
-      return user;
+      return user.id;
     }
   }
-  return null;
+  return undefined;
 };
 
 module.exports = findUserByEmail;
