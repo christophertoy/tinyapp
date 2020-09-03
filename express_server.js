@@ -133,7 +133,7 @@ app.post('/logout', (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL
   const id = req.cookies.user_id
-  if (userCheck(shortURL)) {
+  if (userCheck(id)) {
     delete urlDatabase[shortURL];
     return res.redirect("/urls")
   } else {
