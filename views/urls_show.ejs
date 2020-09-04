@@ -21,16 +21,15 @@
   </div>
   </div>
   <main style="margin:1em">
-  <h3>Edit</h3>
-  <form action="/urls/<%= shortURL %>"  method="POST">
-    <div class="form-group row">
-      <div class="col-4"
-      <label>Update URL:</label>
-      <input type="text" class="form-control" name="longURL" placehoder="http://">
+    <h3>Edit</h3>
+    <form action="/urls/<%= shortURL %>" method="POST">
+      <div class="form-group row">
+        <div class="col-4" <label>Update URL:</label>
+          <input type="text" class="form-control" name="longURL" placehoder="http://">
+        </div>
       </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Edit</button>
-  </form>
+      <button type="submit" class="btn btn-primary">Edit</button>
+    </form>
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -43,5 +42,5 @@
     integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
 </body>
-</html>
 
+</html>
